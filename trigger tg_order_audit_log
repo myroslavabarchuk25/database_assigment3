@@ -1,0 +1,17 @@
+create or replace function order_audit_log()
+returns trigger
+language plpgsql
+as $$ 
+begin
+	insert into order_log (order_id, customer_id, action, log_date)
+	values (new.order_id, new.customer_id, 'Order Created', current_timestamp);
+
+	return new;
+end;
+$$;
+
+create trigger tg_order_audit_log 
+after insert 
+on orders
+for each row
+execute function order_audit_log();
