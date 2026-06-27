@@ -1,0 +1,24 @@
+-- Bonus Task 3 — Query Analysis 
+
+explain analyze
+select *,    
+    o.quantity * o.price as item_total
+from order_items o
+join products p using (product_id)
+where o.order_id = 9;
+
+
+Hash Join  (cost=27.09..41.32 rows=7 width=302) (actual time=0.151..0.154 rows=1.00 loops=1)
+  Hash Cond: (p.product_id = o.product_id)
+  Buffers: shared hit=2
+  ->  Seq Scan on products p  (cost=0.00..13.00 rows=300 width=242) (actual time=0.030..0.032 rows=6.00 loops=1)
+        Buffers: shared hit=1
+  ->  Hash  (cost=27.00..27.00 rows=7 width=32) (actual time=0.028..0.028 rows=1.00 loops=1)
+        Buckets: 1024  Batches: 1  Memory Usage: 9kB
+        Buffers: shared hit=1
+        ->  Seq Scan on order_items o  (cost=0.00..27.00 rows=7 width=32) (actual time=0.022..0.023 rows=1.00 loops=1)
+              Filter: (order_id = 9)
+              Rows Removed by Filter: 6
+              Buffers: shared hit=1
+Planning Time: 0.316 ms
+Execution Time: 0.209 ms
