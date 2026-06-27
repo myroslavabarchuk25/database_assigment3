@@ -1,0 +1,28 @@
+--Task 4
+
+--
+create or replace function update_order_total()
+returns trigger
+language plpgsql
+as $$ 
+declare 
+	v_order_id int;
+begin
+	if tg_op = 'delete' then -- tg_op trigger operation
+		v_order_id = old.order_id; -- якщо delete то старе
+	else
+		v_order_id = new.order_id; -- якщо update або insert то оновлює
+	end if;
+	
+	update orders
+	set total_amount = calculate_order_total(v_order_id)
+	where order_id = p_order_id;
+	return null;
+end;
+$$;
+
+create trigger tg_update_order_total 
+after insert or update or delete 
+on order_items
+for each row
+execute function update_order_total();
