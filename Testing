@@ -1,0 +1,28 @@
+-- Task 6
+-- створила нового користувача
+insert into customers (full_name, email)
+values ('Myroslava Barchuk', 'myroslava@gmail.com');
+
+--створила новий продукт
+insert into products(product_name, price, stock_quantity)
+values ('Antistress', 100, 50);
+
+select *
+from customers; -- мій ід 5
+select *
+from products; -- ід для антистресса 6
+
+-- створюю своє замовлення 
+call create_order(5);
+select *
+from orders
+where customer_id = 5; -- ід цього замовлення 9
+
+-- в замовлення додаю 2 антистресса
+call add_product_to_order(9,6,2);
+select *
+from orders
+where customer_id = 5; -- сума замовлення 200
+select *
+from order_log
+where order_id = 9; -- замовлення записане
